@@ -20,6 +20,9 @@ echo $categoria->nombre . PHP_EOL;
 // $libro2 = new Libro(10, 'Dune', 412, $autor, $categoria, false);
 // echo $libro2->disponible ? 'True' . PHP_EOL : 'False' . PHP_EOL;
 
+//Dejo este codigo comentado aunque a continuación se dice que se sustituya por el siguiente código
+//a modo de demostración
+
 // Fase 3.2: sustituye las pruebas anteriores por un Libro construido
 // con las variables $titulo y $paginas. Muestra ambas propiedades.
 
@@ -28,4 +31,4 @@ $paginas = 0;
 
 $libro = new Libro(10, $titulo, $paginas, $autor, $categoria);
 
-echo 'Titulo: ' . $libro->titulo . '. Paginas: ' . $libro->paginas . '.' . PHP_EOL;
+echo 'Título: ' . $libro->titulo . '. Páginas: ' . $libro->paginas . '.' . PHP_EOL;

@@ -13,7 +13,7 @@ final class Libro
         public bool $disponible = true
     ){
         $this->titulo = trim($this->titulo);
-        $this->titulo = $this->titulo === '' ? 'Sin titulo' : $this->titulo;
+        $this->titulo = $this->titulo === '' ? 'Sin título' : $this->titulo;
 
         if($this->paginas <= 0){
             $this->paginas = 1;
@@ -30,6 +30,6 @@ final class Libro
         $this->disponible = true;
     }
     public function ficha(): string{
-        return  $this->titulo . ' / ' . $this->autor->nombre ?? 'Sin autor' . ' / ' . $this->categoria->nombre . ' / ' . $this->paginas . ' paginas';
+        return  $this->titulo . ' / ' . ($this->autor?->nombre ?? 'Sin autor') . ' / ' . $this->categoria->nombre . ' / ' . $this->paginas . ' páginas';
     }
 }

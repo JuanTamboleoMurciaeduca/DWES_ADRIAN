@@ -60,6 +60,10 @@ function e(string $texto): string
                         <tr>
                             <th scope="row"><?= e($libro->titulo) ?></th>
                             <td><?= e($libro->autor?->nombre ?? 'Sin autor') ?></td>
+                            <?php //Con respecto al punto 4.1.3: 
+                            //En el primer caso se estaria imprimiendo por pantalla el nombre del autor; en el segundo caso, si el nombre del autor es nulo, imprime 'Sin título'
+                            //Con respecto al 6.4: Aquí, se recibe el dato del objeto en el tramo escrito antes del operador ??; por otra parte, se permite
+                            //escribir en el html gracias a que la funcion e() escapa el texto mediante htmlspecialchars y codificacion UTF-8 ?>
                             <td><?= e($libro->categoria->nombre) ?></td>
                             <td><?= (int) $libro->paginas ?></td>
                             <td><span class="estado <?= $libro->disponible ? 'disponible' : 'prestado' ?>">
