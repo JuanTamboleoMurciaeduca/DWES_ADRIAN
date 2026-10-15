@@ -1,0 +1,13 @@
+{
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/"
+    }
+  },
+  "require": {
+    "ramsey/uuid": "^4.9"
+  },
+  "scripts": {
+    "uuid": "@php public/uuid.php"
+  }
+}
