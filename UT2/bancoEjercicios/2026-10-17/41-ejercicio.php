@@ -18,11 +18,12 @@ if(isset($libroConId10)){
     $libroConId10->prestar();
 }
 
-echo $libroConId10->disponible;
+echo $libroConId10->disponible ? 'True' : 'False';
 echo '<br>';
-echo $coleccion[0]->disponible;
+echo $coleccion[0]->disponible ? 'True' : 'False';
 echo '<br>';
-echo $disponibles[0]->disponible;
+echo $disponibles[0]->disponible ? 'True' : 'False';
+echo '<br>';
 
 $disponibles2 = array_filter(
     $coleccion, 
@@ -35,3 +36,8 @@ $libroConId99 = array_find(
 );
 
 echo $libroConId99?->titulo ?? 'Libro no encontrado';
+
+//Las colecciones contienen referencias al mismo objeto porque estas guardan todas
+//la misma dirección en memoria, es decir, el objeto creado
+//Si inicialmente hemos guardado un objeto en una variable, aunque cambie el estado del 
+//objeto va a seguir dentro de la misma variable. Estamos modificando un objeto concreto, no la clase
