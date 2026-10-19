@@ -89,7 +89,7 @@ usort($visibles,
 // Fase 6.3: resumen del catálogo completo, antes de filtrar.
 // Completa disponibles con array_filter y paginas con array_reduce.
 $resumen = ['total' => count($libros), 
-            'disponibles' => count(array_filter($libros, fn(Libro $libro):bool => $libro->disponible === true)), 
+            'disponibles' => count(array_filter($libros, fn(Libro $libro):bool => $libro->disponible)), 
             'paginas' => array_reduce($libros, fn(int $carry, Libro $libro): int=> $carry + $libro->paginas, 0)];
 
 
