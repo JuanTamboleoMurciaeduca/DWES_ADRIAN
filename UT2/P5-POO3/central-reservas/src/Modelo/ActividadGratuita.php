@@ -16,7 +16,6 @@ final class ActividadGratuita extends Actividad{
 
     public function importe(int $cantidad): int
     {
-        return $cantidad < 0 ? throw new InvalidArgumentException('No se aceptan cantidades negativas')
-                            : 0; 
+        return $cantidad < 0 ? (throw new InvalidArgumentException('No se aceptan cantidades negativas')) : 0; 
     }
 }

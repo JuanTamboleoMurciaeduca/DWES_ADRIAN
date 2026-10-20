@@ -26,7 +26,10 @@ function normalizar(string $texto): string
 function buscarPorId(array $actividades, int $id): ?Actividad
 {
     // TODO F3. Usa array_find con un callback tipado.
-    throw new LogicException("Pendiente: buscarPorId.");
+    return array_find(
+        $actividades,
+        fn(Actividad $a):bool => $a->id() === $id
+    ) ?? null;
 }
 
 function filtrarActividades(
@@ -34,13 +37,26 @@ function filtrarActividades(
     ?EstadoActividad $estado, bool $soloDisponibles
 ): array {
     // TODO F4. Combina las cuatro condiciones mediante array_filter.
-    throw new LogicException("Pendiente: filtrarActividades.");
+    return array_values(array_filter(
+        $actividades,
+        fn(Actividad $a):bool => (str_contains(normalizar($a->nombre()), normalizar($texto))) &&
+                (normalizar($a->tipo()) === 'gratuito' || normalizar($a->tipo()) === 'pago') && 
+                ($a->estado() === $estado ?? 'todos') && 
+                (!$soloDisponibles || $a->estado() === 'Libre' && $a->plazasLibres() > 0)));
 }
 
 function ordenarActividades(array $actividades, string $orden): array
 {
     // TODO F5. Ordena una copia con usort y desempata por id.
-    throw new LogicException("Pendiente: ordenarActividades.");
+    $copia = $actividades;
+    normalizar($orden) === 'libres' ? 
+    usort($copia, 
+        fn(Actividad $a, Actividad $b): int => [$a->plazasLibres(), $a->id()] <=> [$b->plazasLibres(), $b->id()]
+    ) :
+    usort($copia, 
+        fn(Actividad $a, Actividad $b): int => [$a->nombre(), $a->id()] <=> [$b->nombre(), $b->id()]
+    );
+    return $orden !== 'libres' || $orden !== 'nombre' ? null : $copia;
 }
 
 function transformarActividades(array $actividades, callable $transformacion): array
@@ -53,13 +69,25 @@ function generarEtiquetas(
 ): array
 {
     // TODO F6. Usa transformarActividades y una closure con use.
-    throw new LogicException("Pendiente: generarEtiquetas.");
+    return transformarActividades($actividades, 
+        function (Actividad $a) use ($prefijo){
+            return $a->etiqueta($prefijo);
+        }
+    );
 }
-
 function resumirActividades(array $actividades): array
 {
     // TODO F7. Calcula las cinco magnitudes con array_reduce.
-    throw new LogicException("Pendiente: resumirActividades.");
+    return array_reduce($actividades, 
+        function(array $carry, Actividad $item){
+            $carry['cantidad'] += 1;
+            $carry['capacidad'] = $item->capacidad();
+            $carry['ocupadas'] = $item->ocupadas();
+            $carry['libres'] = $item->plazasLibres();
+            $carry['importe'] += $item->importe($item->ocupadas());
+        }, 
+        ['cantidad' => 0, 'capacidad' => 0, 'ocupadas' => 0, 'libres' => 0, 'importe' => 0]
+    );
 }
 
 function e(string $texto): string

@@ -19,8 +19,7 @@ final class ActividadPago extends Actividad{
 
     public function importe(int $cantidad): int
     {
-        return $cantidad < 0 ? throw new InvalidArgumentException('No se aceptan cantidades negativas')
-                            : (int) ($cantidad * $this->precioCentimos);
+        return $cantidad < 0 ? (throw new InvalidArgumentException('No se aceptan cantidades negativas')) : (int) ($cantidad * $this->precioCentimos);
     }
 
 }

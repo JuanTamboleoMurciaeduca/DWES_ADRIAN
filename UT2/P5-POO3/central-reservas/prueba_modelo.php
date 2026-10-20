@@ -27,4 +27,12 @@ $responsable104 = array_find(
     $actividadesPrueba, 
     fn(Actividad $a): bool => $a->id() === 104)->responsable(); //null
 
-print('Hola');
+$etiqueta1 = $actividad101->etiqueta('Actividad');
+$etiqueta2 = $responsable101->etiqueta('Responsable');
+
+// $responsable101->nombre = 'Juan';
+// Fatal error: Uncaught Error: Cannot modify readonly property Responsable::$nombre in C:\Users\Adrian\DWES-26-27\UT2\P5-POO3\central-reservas\prueba_modelo.php:33
+// Stack trace:
+// #0 {main}
+//   thrown in C:\Users\Adrian\DWES-26-27\UT2\P5-POO3\central-reservas\prueba_modelo.php on line 33
+// Como la propiedad es readonly no se puede reasignar un nuevo valor
