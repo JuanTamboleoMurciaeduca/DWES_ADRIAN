@@ -36,3 +36,4 @@ $etiqueta2 = $responsable101->etiqueta('Responsable');
 // #0 {main}
 //   thrown in C:\Users\Adrian\DWES-26-27\UT2\P5-POO3\central-reservas\prueba_modelo.php on line 33
 // Como la propiedad es readonly no se puede reasignar un nuevo valor
+//5.3.5: En el depurador, las propiedades privadas aparecen rodeadas entre asteriscos (*) y no forman parte del acceso publico
