@@ -4,13 +4,17 @@ declare(strict_types=1);
 function entrada(array $origen, string $clave, string $defecto = ''): string
 {
     // TODO F1. Lee solo cadenas y aplica el valor por defecto.
-    throw new LogicException("Pendiente: entrada.");
+    return (isset($origen[$clave]) && is_string($origen[$clave])) ? $origen[$clave] : $defecto;
 }
 
 function enteroPositivo(string $valor): int
 {
     // TODO F2. Valida antes de convertir; rechaza con InvalidArgumentException.
-    throw new LogicException("Pendiente: enteroPositivo.");
+    //return filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) ?? throw new InvalidArgumentException('El valor debe de ser entero positivo')
+    $valorValido = filter_var($valor, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+    if($valorValido === false)
+        throw new InvalidArgumentException('El valor debe de ser entero positivo');
+    return $valorValido;
 }
 
 function limpiarEspacios(string $texto): string
