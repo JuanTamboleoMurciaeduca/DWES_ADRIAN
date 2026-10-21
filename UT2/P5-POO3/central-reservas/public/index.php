@@ -16,7 +16,7 @@ $cierre = '';
 $texto = entrada($_GET, 'q');
 $tipo = entrada($_GET, 'tipo');
 $estadoTexto = entrada($_GET, 'estado');
-$soloDisponibles = entrada($_GET, 'disponibles');
+$soloDisponibles = entrada($_GET, 'disponibles') === '1';
 $orden = entrada($_GET, 'orden', 'nombre');
 $idConsulta = entrada($_GET, 'id');
 
@@ -24,13 +24,11 @@ if(!in_array($tipo, ['', 'gratuita', 'pago'])){
     $avisos[]= 'Tipo no valido';
     $tipo = '';
 }
-if(is_null(EstadoActividad::tryFrom($estadoTexto))){
+if(!is_string($estadoTexto)){
     $avisos[] = 'Estado no valido';
     $estadoTexto = '';
 }
-if($soloDisponibles !== '1'){
-    $soloDisponibles = false;
-}
+$estado = EstadoActividad::tryFrom($estadoTexto);
 if(!in_array($orden, ['nombre', 'libres'])){
     $orden = 'nombre';
 }
@@ -48,9 +46,15 @@ if (isset($_GET['accion'])) {
         $cantidad = enteroPositivo(entrada($_GET, 'cantidad'));
         $actividadBuscada = buscarPorId($actividades, $idActividad);
 
-        is_null($actividadBuscada) ? throw new ReservaException('Actividad no encontrada') : $actividadBuscada->importe($cantidad);
+        is_null($actividadBuscada) ? (throw new ReservaException('Actividad no encontrada')) : ($actividadBuscada->importe($cantidad));
 
-        $accion === 'reservar' ? $mensaje = 'Reserva realizada' : $mensaje = 'Cancelación realizada';
+       if($accion === 'reservar'){
+            $actividadBuscada->reservar($cantidad);
+            $mensaje = 'Reserva realizada. Importe:  ' . euros($actividadBuscada->importe($cantidad));
+       } else {
+            $actividadBuscada->cancelar($cantidad);
+            $mensaje = 'Cancelación realizada. Importe:  ' . euros($actividadBuscada->importe($cantidad));
+       }
     }catch(PlazasInsuficientesException $e){
         $error = $e->getMessage();
     }catch(ReservaException $e){
@@ -67,19 +71,20 @@ if (isset($_GET['accion'])) {
 // INICIO E3
 // TODO E3. Consulta la ficha y prepara el listado, el resumen y las etiquetas.
 $ficha = null;
-try{
-    if(!empty($idConsulta)){
-        $idConsulta = enteroPositivo(entrada($actividades, $idConsulta));
+if($idConsulta !== ''){
+    try{
+    $idFicha = enteroPositivo($idConsulta);
+    $ficha = buscarPorId($actividades, $idFicha) ?? throw new InvalidArgumentException('No existe la actividad de la ficha');
+        
+    }catch(InvalidArgumentException $e){
+        $avisos[] = $e->getMessage();
     }
-    if(!isset($idConsulta)){
-        $avisos[] = 'Id no encontrado';
-    }
-    
-}catch(InvalidArgumentException $e){
-    $error = $e->getMessage();
+
 }
 
-
+$visibles = ordenarActividades(filtrarActividades($actividades, $texto, $tipo, $estado, $soloDisponibles), $orden);
+$resumen = resumirActividades($visibles);
+$etiquetas = generarEtiquetas($visibles);
 // FIN E3
 
 require __DIR__ . '/../vista/catalogo.php';

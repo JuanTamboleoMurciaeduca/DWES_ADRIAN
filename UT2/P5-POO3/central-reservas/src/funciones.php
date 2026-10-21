@@ -44,9 +44,9 @@ function filtrarActividades(
     return array_values(array_filter(
         $actividades,
         fn(Actividad $a):bool => (str_contains(normalizar($a->nombre()), normalizar($texto))) &&
-                (normalizar($a->tipo()) === 'gratuito' || normalizar($a->tipo()) === 'pago') && 
-                ($a->estado() === $estado ?? 'todos') && 
-                (!$soloDisponibles || $a->estado() === 'Libre' && $a->plazasLibres() > 0)));
+                ($tipo === '' || $a->tipo() === $tipo) && 
+                ($estado === null || $a->estado() === $estado) && 
+                (!$soloDisponibles || $a->estado() === EstadoActividad::Abierta && $a->plazasLibres() > 0)));
 }
 
 function ordenarActividades(array $actividades, string $orden): array
@@ -58,9 +58,9 @@ function ordenarActividades(array $actividades, string $orden): array
         fn(Actividad $a, Actividad $b): int => [$a->plazasLibres(), $a->id()] <=> [$b->plazasLibres(), $b->id()]
     ) :
     usort($copia, 
-        fn(Actividad $a, Actividad $b): int => [$a->nombre(), $a->id()] <=> [$b->nombre(), $b->id()]
+        fn(Actividad $a, Actividad $b): int => [normalizar($a->nombre()), $a->id()] <=> [normalizar($b->nombre()), $b->id()]
     );
-    return $orden !== 'libres' || $orden !== 'nombre' ? null : $copia;
+    return $copia;
 }
 
 function transformarActividades(array $actividades, callable $transformacion): array
@@ -85,10 +85,12 @@ function resumirActividades(array $actividades): array
     return array_reduce($actividades, 
         function(array $carry, Actividad $item){
             $carry['cantidad'] += 1;
-            $carry['capacidad'] = $item->capacidad();
-            $carry['ocupadas'] = $item->ocupadas();
-            $carry['libres'] = $item->plazasLibres();
+            $carry['capacidad'] += $item->capacidad();
+            $carry['ocupadas'] += $item->ocupadas();
+            $carry['libres'] += $item->plazasLibres();
             $carry['importe'] += $item->importe($item->ocupadas());
+
+            return $carry;
         }, 
         ['cantidad' => 0, 'capacidad' => 0, 'ocupadas' => 0, 'libres' => 0, 'importe' => 0]
     );

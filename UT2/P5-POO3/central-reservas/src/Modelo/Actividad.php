@@ -23,7 +23,7 @@ abstract class Actividad implements Reservable{
         if($this->capacidad < 0 || !is_int($capacidad)){
             throw new InvalidArgumentException('La capacidad debe de ser un valor entero positivo');
         }
-        if($this->$ocupadas < 0){
+        if($this->ocupadas < 0){
             throw new InvalidArgumentException('La cantidad de plazas ocupadas debe de ser un valor positivo');
         }
         if($this->ocupadas > $this->capacidad){
@@ -63,13 +63,13 @@ abstract class Actividad implements Reservable{
         if($cantidad <= 0){
             throw new InvalidArgumentException('La cantidad a reservar debe de ser mayor o igual a 0');
         }
-        if($this->estado()::Cerrada){
+        if($this->estado() === EstadoActividad::Cerrada){
             throw new ReservaException('No se puede reservar una actividad cerrada');
         }
         if($cantidad > $this->plazasLibres()){
             throw new PlazasInsuficientesException('No hay suficientes plazas');
         }
-        $this->ocupadas++;
+        $this->ocupadas += $cantidad; 
     }
 
     
@@ -79,7 +79,7 @@ abstract class Actividad implements Reservable{
             throw new InvalidArgumentException('La cantidad indicada debe de ser mayor que 0');
         }
         if($cantidad > $this->ocupadas()){
-            throw new ReservaException('No se pueden reservar mas plazas de las ocupadas');
+            throw new ReservaException('No se pueden cancelar mas plazas de las ocupadas');
         }
         $this->ocupadas -= $cantidad;
     }
