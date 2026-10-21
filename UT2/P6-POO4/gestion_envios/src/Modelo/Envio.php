@@ -1,0 +1,71 @@
+<?php
+declare(strict_types=1);
+
+namespace App\Modelo;
+use App\Modelo\EstadoEnvio;
+use App\Exception\EnvioException;
+use InvalidArgumentException;
+
+abstract class Envio{
+    
+
+    public function __construct(private readonly int $id, 
+                                private string $cliente, 
+                                private int $peso, 
+                                private EstadoEnvio $estado)
+    {
+        if($this->id() <= 0){
+            throw new InvalidArgumentException('El valor id debe de ser un entero positivo');
+        }
+        if(trim($this->cliente()) === ''){
+            throw new InvalidArgumentException('Cliente es un campo obligatorio');
+        }
+        if($this->peso() < 1 || $this->peso() > 20000){
+            throw new InvalidArgumentException('El peso no se encuentra dentro de los valores permitidos');
+        }
+    }
+
+
+    public function id(): int{
+        return $this->id;
+    }
+    public function cliente():string{
+        return $this->cliente;
+    }
+    public function peso(): int{
+        return $this->peso;
+    }
+    public function estado():EstadoEnvio{
+        return $this->estado;
+    }
+    public abstract function modalidad():string;
+
+    protected abstract function cuotaFija():int;
+    protected abstract function precioBloque():int;
+
+    public function tarifa():int{
+
+        $bloques = $this->peso + 999 / 1000;
+
+        return $this->cuotaFija() + ($bloques * $this->precioBloque());
+    }
+
+    public function enviar():void{
+        if($this->estado() !== 'pendiente'){
+            throw new EnvioException('Operacion no valida, el estado de partida admitido es pendiente');
+        }
+        $this->estado = EstadoEnvio::Enviado;
+    }
+    public function entregar():void{
+        if($this->estado() !== 'enviado'){
+            throw new EnvioException('Operacion no valida, el estado de partida admitido es enviado ');
+        }
+        $this->estado = EstadoEnvio::Entregado;
+    }
+    public function cancelar(): void{
+        if($this->estado() !== 'pendiente'){
+            throw new EnvioException('Operacion no valida, el estado de partida admitido es pendiente');
+        }
+        $this->estado = EstadoEnvio::Cancelado;
+    }
+}
