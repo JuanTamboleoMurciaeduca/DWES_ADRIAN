@@ -2,19 +2,24 @@
 
 declare(strict_types=1);
 
+namespace App\Repositorio;
+
 use App\Modelo\Envio;
 use App\Contrato\RepositorioEnvios;
-use App\Exception\EnvioException;
+use App\Excepcion\EnvioException;
+use InvalidArgumentException;
 
 class RepositorioEnviosMemoria implements RepositorioEnvios{
-    public function __construct(private array $envios)
+    private array $envios = [];
+    public function registrar(Envio $envio): void
     {
+        foreach ($this->envios as $existente) {
+            if ($existente->id() === $envio->id()) {
+                throw new EnvioException('No se admiten envios duplicados');
+            }
+        }
 
-    }
-    public function registrar(Envio $envio): void{
-        if(in_array($envio->id(), $this->todos()))
-            throw new EnvioException('No se admiten envios duplicados');
-        $this->envios[] = $envio; 
+        $this->envios[] = $envio;
     }
     public function todos():array{
         return $this->envios;
