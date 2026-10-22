@@ -1,0 +1,30 @@
+<?php
+
+declare(strict_types=1);
+
+use App\Modelo\Envio;
+use App\Contrato\RepositorioEnvios;
+use App\Exception\EnvioException;
+
+class RepositorioEnviosMemoria implements RepositorioEnvios{
+    public function __construct(private array $envios)
+    {
+
+    }
+    public function registrar(Envio $envio): void{
+        if(in_array($envio->id(), $this->todos()))
+            throw new EnvioException('No se admiten envios duplicados');
+        $this->envios[] = $envio; 
+    }
+    public function todos():array{
+        return $this->envios;
+    }
+    public function buscar(int $id): ?Envio{
+        if($id <= 0)
+            throw new InvalidArgumentException('El id debe de ser un valor positivo');
+        return array_find(
+            $this->todos(),
+            fn(Envio $e):bool => $e->id() === $id
+        ) ?? null;
+    }
+}
