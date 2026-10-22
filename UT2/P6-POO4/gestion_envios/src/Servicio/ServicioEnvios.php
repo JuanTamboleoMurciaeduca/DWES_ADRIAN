@@ -80,7 +80,7 @@ class ServicioEnvios
     public function etiquetas(array $envios): array
     {
         return array_map(
-            fn(Envio $e): string => 'Id: ' . $e->id() . ' · Cliente: ' . $e->cliente() . ' · Modalidad: ' . $e->modalidad() . ' · Estado: ' . $e->estado() . ' · Tarifa: ' . $e->tarifa() . '€',
+            fn(Envio $e): string => 'Id: ' . $e->id() . ' · Cliente: ' . $e->cliente() . ' · Modalidad: ' . $e->modalidad() . ' · Estado: ' . $e->estado()->EstadoEnvio . ' · Tarifa: ' . $e->tarifa() . '€',
             $envios
         );
     }
@@ -93,7 +93,7 @@ class ServicioEnvios
                 $carry['cantidad'] += count($envios);
                 $carry['peso'] += $item->peso();
                 $carry['importeTotal'] += $item->tarifa();
-                if ($item->estado() !== 'cancelado') {
+                if ($item->estado() !== EstadoEnvio::Cancelado) {
                     $carry['importeActivo'] += $item->tarifa();
                 }
                 $carry[$item->estado()->value] += 1;
