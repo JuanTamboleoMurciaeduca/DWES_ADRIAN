@@ -6,4 +6,4 @@ namespace Clase\Alquileres\Excepcion;
 
 use RuntimeException;
 
-class AlquilerException extends RuntimeException{}
+class AlquilerException extends RuntimeException {}
