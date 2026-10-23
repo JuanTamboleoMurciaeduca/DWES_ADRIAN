@@ -1,0 +1,19 @@
+{
+    "name": "adrian/alquileres",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Clase\\Alquileres\\": "src/"
+        }
+    },
+    "scripts":{
+        "alquiler" : "php alquileres.php"
+    },
+    "authors": [
+        {
+            "name": "adrirosel",
+            "email": "roselmartinezadrian@gmail.com"
+        }
+    ],
+    "require": {}
+}
