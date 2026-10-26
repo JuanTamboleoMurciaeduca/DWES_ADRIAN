@@ -1,0 +1,11 @@
+{
+    "name": "ejercicios/ejercicio-54",
+    "description": "Ejercicio 54 de PHP",
+    "type": "project",
+    "require": {"php": "^8.5"},
+    "autoload": {"psr-4": {"App\\": "src/"}},
+    "scripts": {
+        "catalogo": "@php public/index.php",
+        "resumen": "@php public/resumen.php"
+    }
+}

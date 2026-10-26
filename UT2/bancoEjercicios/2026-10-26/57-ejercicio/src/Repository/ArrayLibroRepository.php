@@ -1,0 +1,30 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Repository;
+
+use App\Contract\LibroRepository;
+use App\Model\Libro;
+
+final class ArrayLibroRepository implements LibroRepository
+{
+    /** @param Libro[] $libros */
+    public function __construct(private array $libros)
+    {
+    }
+
+    /** @return Libro[] */
+    public function todos(): array
+    {
+        return $this->libros;
+    }
+
+    public function buscarPorId(int $id): ?Libro
+    {
+        return array_find(
+            $this->libros,
+            static fn (Libro $libro): bool => $libro->id() === $id,
+        );
+    }
+}

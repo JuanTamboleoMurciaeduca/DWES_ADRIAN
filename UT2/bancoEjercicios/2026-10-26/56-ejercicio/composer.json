@@ -1,0 +1,7 @@
+{
+    "name": "ejercicios/ejercicio-56",
+    "description": "Ejercicio 56 de PHP",
+    "type": "project",
+    "require": {"php": "^8.5"},
+    "autoload": {"psr-4": {"App\\": "src/"}}
+}
