@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 function entrada(array $origen, string $clave, string $defecto = ''): string
@@ -12,7 +13,7 @@ function enteroPositivo(string $valor): int
     // TODO F2. Valida antes de convertir; rechaza con InvalidArgumentException.
     //return filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) ?? throw new InvalidArgumentException('El valor debe de ser entero positivo')
     $valorValido = filter_var($valor, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
-    if($valorValido === false)
+    if ($valorValido === false)
         throw new InvalidArgumentException('El valor debe de ser entero positivo');
     return $valorValido;
 }
@@ -32,34 +33,40 @@ function buscarPorId(array $actividades, int $id): ?Actividad
     // TODO F3. Usa array_find con un callback tipado.
     return array_find(
         $actividades,
-        fn(Actividad $a):bool => $a->id() === $id
-    ) ?? null;
+        fn(Actividad $a): bool => $a->id() === $id
+    );
 }
 
 function filtrarActividades(
-    array $actividades, string $texto, string $tipo,
-    ?EstadoActividad $estado, bool $soloDisponibles
+    array $actividades,
+    string $texto,
+    string $tipo,
+    ?EstadoActividad $estado,
+    bool $soloDisponibles
 ): array {
     // TODO F4. Combina las cuatro condiciones mediante array_filter.
     return array_values(array_filter(
         $actividades,
-        fn(Actividad $a):bool => (str_contains(normalizar($a->nombre()), normalizar($texto))) &&
-                ($tipo === '' || $a->tipo() === $tipo) && 
-                ($estado === null || $a->estado() === $estado) && 
-                (!$soloDisponibles || $a->estado() === EstadoActividad::Abierta && $a->plazasLibres() > 0)));
+        fn(Actividad $a): bool => (str_contains(normalizar($a->nombre()), normalizar($texto))) &&
+            ($tipo === '' || $a->tipo() === $tipo) &&
+            ($estado === null || $a->estado() === $estado) &&
+            (!$soloDisponibles || $a->estado() === EstadoActividad::Abierta && $a->plazasLibres() > 0)
+    ));
 }
 
 function ordenarActividades(array $actividades, string $orden): array
 {
     // TODO F5. Ordena una copia con usort y desempata por id.
     $copia = $actividades;
-    normalizar($orden) === 'libres' ? 
-    usort($copia, 
-        fn(Actividad $a, Actividad $b): int => [$a->plazasLibres(), $a->id()] <=> [$b->plazasLibres(), $b->id()]
-    ) :
-    usort($copia, 
-        fn(Actividad $a, Actividad $b): int => [normalizar($a->nombre()), $a->id()] <=> [normalizar($b->nombre()), $b->id()]
-    );
+    normalizar($orden) === 'libres' ?
+        usort(
+            $copia,
+            fn(Actividad $a, Actividad $b): int => [$a->plazasLibres(), $a->id()] <=> [$b->plazasLibres(), $b->id()]
+        ) :
+        usort(
+            $copia,
+            fn(Actividad $a, Actividad $b): int => [normalizar($a->nombre()), $a->id()] <=> [normalizar($b->nombre()), $b->id()]
+        );
     return $copia;
 }
 
@@ -69,12 +76,13 @@ function transformarActividades(array $actividades, callable $transformacion): a
 }
 
 function generarEtiquetas(
-    array $actividades, string $prefijo = 'Actividad: '
-): array
-{
+    array $actividades,
+    string $prefijo = 'Actividad: '
+): array {
     // TODO F6. Usa transformarActividades y una closure con use.
-    return transformarActividades($actividades, 
-        function (Actividad $a) use ($prefijo){
+    return transformarActividades(
+        $actividades,
+        function (Actividad $a) use ($prefijo) {
             return $a->etiqueta($prefijo);
         }
     );
@@ -82,8 +90,9 @@ function generarEtiquetas(
 function resumirActividades(array $actividades): array
 {
     // TODO F7. Calcula las cinco magnitudes con array_reduce.
-    return array_reduce($actividades, 
-        function(array $carry, Actividad $item){
+    return array_reduce(
+        $actividades,
+        function (array $carry, Actividad $item) {
             $carry['cantidad'] += 1;
             $carry['capacidad'] += $item->capacidad();
             $carry['ocupadas'] += $item->ocupadas();
@@ -91,7 +100,7 @@ function resumirActividades(array $actividades): array
             $carry['importe'] += $item->importe($item->ocupadas());
 
             return $carry;
-        }, 
+        },
         ['cantidad' => 0, 'capacidad' => 0, 'ocupadas' => 0, 'libres' => 0, 'importe' => 0]
     );
 }
