@@ -113,9 +113,9 @@ final class InventarioService
         );
 
         usort(
-            $propuestas,
+            $opciones,
             fn (array $a, array $b): int =>
-                [$b['importeCentimos'], $b['id']] <=> [$a['importeCentimos'], $a['id']]
+                [$a['importeCentimos'], $a['id']] <=> [$b['importeCentimos'], $b['id']]
         );
 
         return $opciones;
