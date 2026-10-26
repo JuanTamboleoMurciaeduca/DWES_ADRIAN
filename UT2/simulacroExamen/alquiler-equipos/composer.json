@@ -1,0 +1,16 @@
+{
+    "name": "adrian/alquiler-equipos",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Alquiler\\Equipo\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "adrirosel",
+            "email": "roselmartinezadrian@gmail.com"
+        }
+    ],
+    "require": {}
+}
