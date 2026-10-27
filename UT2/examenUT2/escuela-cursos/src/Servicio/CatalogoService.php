@@ -11,25 +11,22 @@ use InvalidArgumentException;
 
 final class CatalogoService
 {
-    public function __construct(private CursoRepository $repository)
-    {
-    }
+    public function __construct(private CursoRepository $repository) {}
 
     public function filtrar(
         string $texto = '',
         ?EstadoCurso $estado = null,
         bool $soloConPlazas = false
-    ): array
-    {
+    ): array {
         $texto = mb_strtolower(trim($texto), 'UTF-8');
 
         // TODO F1: filtra los cursos mediante array_filter.
         return array_values(array_filter(
-            $this->repository->todos(), 
-            fn(Curso $c): bool =>
-                (str_contains($c->nombreNormalizado(), $texto )) &&
+            $this->repository->todos(),
+            fn(Curso $c): bool => (str_contains($c->nombreNormalizado(), $texto)) &&
                 (is_null($estado) || $estado === $c->estado()) &&
-                (!$soloConPlazas || ($estado === EstadoCurso::Abierto && $c->plazasLibres() > 0))
+                // Aquí estaba tu fallo
+                (!$soloConPlazas || ($c->estado() === EstadoCurso::Abierto && $c->plazasLibres() > 0))
         ));
     }
 
@@ -39,8 +36,8 @@ final class CatalogoService
         $copia = $cursos;
 
         usort(
-            $copia, 
-            fn(Curso $a, Curso $b):int =>
+            $copia,
+            fn(Curso $a, Curso $b): int =>
             [$a->precioPlaza(), $a->id()] <=> [$b->precioPlaza(), $b->id()]
         );
         return $copia;
@@ -50,7 +47,8 @@ final class CatalogoService
     {
         // TODO F3: array_map y arrow function.
         return array_map(
-            fn(Curso $c): string => $prefijo . $c->id() . ' · ' . $c->nombre(), 
+            // Para algo hemos hecho la función etiqueta, no?
+            fn(Curso $c): string => $c->etiqueta($prefijo),
             $cursos
         );
     }
@@ -59,13 +57,13 @@ final class CatalogoService
     {
         // TODO F4: calcula las tres cifras mediante array_reduce.
         return array_reduce(
-            $cursos, 
-            function(array $carry, Curso $item){
+            $cursos,
+            function (array $carry, Curso $item) {
                 $carry['cantidad']++;
                 $carry['libres'] += $item->plazasLibres();
                 $carry['importeCentimos'] += ($item->ocupadas() * $item->precioPlaza());
                 return $carry;
-            }, 
+            },
             ['cantidad' => 0, 'libres' => 0, 'importeCentimos' => 0]
         );
     }
@@ -79,13 +77,13 @@ final class CatalogoService
 
         $candidatos = array_filter(
             $this->repository->todos(),
-            fn (Curso $curso): bool =>
-                $curso->estado() === EstadoCurso::Abierto
+            fn(Curso $curso): bool =>
+            $curso->estado() === EstadoCurso::Abierto
                 && $curso->plazasLibres() >= $plazas
         );
 
         $propuestas = array_map(
-            fn (Curso $curso): array => [
+            fn(Curso $curso): array => [
                 'id' => $curso->id(),
                 'importeCentimos' => $curso->precioPlaza() * $plazas,
                 'libresDespues' => $curso->plazasLibres() - $plazas
@@ -106,12 +104,12 @@ final class CatalogoService
             []
         );
 
+        // Ordenas propuestas en lugar de resultado
         usort(
-            $propuestas,
-            fn (array $a, array $b): int =>
-                (($a['importeCentimos'] <=> $b['importeCentimos']) !== 0)
-                    ? ($a['importeCentimos'] <=> $b['importeCentimos'])
-                    : ($a['id'] <=> $b['id'])
+            $resultado,
+            fn(array $a, array $b): int => (($a['importeCentimos'] <=> $b['importeCentimos']) !== 0)
+                ? ($a['importeCentimos'] <=> $b['importeCentimos'])
+                : ($a['id'] <=> $b['id'])
         );
 
         return $resultado;

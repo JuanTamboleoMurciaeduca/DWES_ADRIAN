@@ -20,14 +20,10 @@ final class CursoPresencial extends Curso
     ) {
         // TODO M0: valida los materiales e inicializa la parte heredada.
         parent::__construct($id, $nombre, $capacidad, $ocupadas, $estado, $precioBaseCentimos);
-        if($this->materialesCentimos < 0 ){
+        if ($this->materialesCentimos < 0) {
             throw new InvalidArgumentException('El valor de materiales debe de ser un entero positivo');
         }
-        if($this->ocupadas() > $this->capacidad()){
-            throw new CursoException('Las plazas ocupadas no pueden ser superiores a la capacidad');
-        }
-
-
+        // Se valida en el padre.
     }
 
     public function tipo(): string

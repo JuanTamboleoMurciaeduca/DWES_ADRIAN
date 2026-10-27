@@ -72,13 +72,13 @@ abstract class Curso
     public function reservar(int $cantidad): void
     {
         // TODO M3: valida la reserva antes de modificar las plazas ocupadas.
-        if($cantidad <= 0){
+        if ($cantidad <= 0) {
             throw new InvalidArgumentException('Solo se aceptan valores enteros positivos');
         }
-        if($this->estado() === EstadoCurso::Cerrado){
+        if ($this->estado() === EstadoCurso::Cerrado) {
             throw new CursoException('No se puede reservar, curso cerrado');
         }
-        if($cantidad > $this->plazasLibres()){
+        if ($cantidad > $this->plazasLibres()) {
             throw new CursoException('No se puede reservar, la cantidad supera las plazas libres');
         }
         $this->ocupadas += $cantidad;
@@ -87,10 +87,10 @@ abstract class Curso
     public function cancelar(int $cantidad): void
     {
         // TODO M4: valida la cancelación antes de modificar las plazas ocupadas.
-        if($cantidad <= 0){
+        if ($cantidad <= 0) {
             throw new InvalidArgumentException('Solo se aceptan valores enteros positivos');
         }
-        if($cantidad > $this->ocupadas()){
+        if ($cantidad > $this->ocupadas()) {
             throw new CursoException('Cancelación cancelada: no se pueden cancelar más plazas de las ocupadas');
         }
         $this->ocupadas -= $cantidad;
