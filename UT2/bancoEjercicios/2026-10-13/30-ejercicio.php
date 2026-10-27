@@ -6,7 +6,7 @@ declare(strict_types=1);
 // { 
 //     public string $titulo; 
 //     public bool $disponible; 
- 
+
 //     public function __construct( 
 //         string $titulo, bool $disponible = true 
 //     ) { 
@@ -17,8 +17,7 @@ declare(strict_types=1);
 
 final class Libro2
 {
-    public function __construct(public string $libro, public bool $disponible = true)
-    {}
+    public function __construct(public string $titulo, public bool $disponible = true) {}
 }
 
 $libro = new Libro2('Dune');

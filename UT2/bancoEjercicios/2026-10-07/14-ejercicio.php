@@ -11,12 +11,14 @@ require_once __DIR__ . '/datos.php';
 //tenerlo mas a mano en este fichero
 
 //Orden ascendente
-usort($libros, 
+usort(
+    $libros,
     fn(array $a, array $b): int =>
-        $a['paginas'] <=> $b['paginas']);
+    $a['paginas'] <=> $b['paginas']
+);
 
 //comprobacion para ver que ocurre con las claves:
-foreach($libros as $clave => $libro){
+foreach ($libros as $clave => $libro) {
     echo $clave . ': ' . $libro['paginas'];
     echo '<br>';
 }
@@ -25,12 +27,13 @@ foreach($libros as $clave => $libro){
 
 //Orden descendente
 
-usort($libros,
+usort(
+    $libros,
     fn(array $a, array $b): int =>
-        $b['paginas'] <=> $a['paginas']
-    );
+    $b['paginas'] <=> $a['paginas']
+);
 
-foreach($libros as $clave => $libro){
+foreach ($libros as $clave => $libro) {
     echo $clave . ': ' . $libro['paginas'];
     echo '<br>';
 }

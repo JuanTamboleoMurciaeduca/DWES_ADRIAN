@@ -19,7 +19,7 @@ var_dump($cadenaNormalizada);
 
 //Calcular longitud
 
-$longitud = strlen($cadenaNormalizada);
+$longitud = mb_strlen($cadenaNormalizada);
 
 var_dump($longitud);
 
