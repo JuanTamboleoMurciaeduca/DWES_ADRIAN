@@ -15,10 +15,11 @@ class ServicioEnvios
     public function __construct(private RepositorioEnvios $repositorio) {}
     private function obtener(int $id): Envio
     {
-        if ($this->repositorio->buscar($id) === null) {
+        $envio = $this->repositorio->buscar($id);
+        if ($envio === null) {
             throw new EnvioException('No existe ningún envío con ese id');
         }
-        return $this->repositorio->buscar($id);
+        return $envio;
     }
 
     public function enviar(int $id): void
@@ -63,7 +64,7 @@ class ServicioEnvios
 
     private static function normalizar(string $texto): string
     {
-        return mb_strtolower(preg_replace('/\s+/', ' ', trim($texto)), 'UTF-8');
+        return mb_strtolower(preg_replace('/\s+/u', ' ', trim($texto)), 'UTF-8');
     }
     public function etiquetas(array $envios): array
     {
@@ -73,11 +74,11 @@ class ServicioEnvios
         );
     }
 
-    public function resumir(array $envios)
+    public function resumir(array $envios): array
     {
         return array_reduce(
             $envios,
-            function (array $carry, Envio $item){
+            function (array $carry, Envio $item) {
                 $carry['cantidad']++;
                 $carry['peso'] += $item->peso();
                 $carry['importeTotal'] += $item->tarifa();

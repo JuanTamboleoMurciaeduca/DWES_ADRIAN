@@ -23,10 +23,10 @@ $envios = [
 
 $repositorio = new RepositorioEnviosMemoria();
 
-foreach($envios as $envio){
+foreach ($envios as $envio) {
     $repositorio->registrar($envio);
 }
-    
+
 $servicio = new ServicioEnvios($repositorio);
 $etiquetas = $servicio->etiquetas($envios);
 $resumen = $servicio->resumir($envios);
@@ -47,15 +47,20 @@ $consultas = [
     ['', null, null, 'peso'],
 ];
 
-foreach($consultas as [$texto, $modalidad, $estado, $orden]){
+foreach ($consultas as [$texto, $modalidad, $estado, $orden]) {
     $resultado = $servicio->consultar($texto, $modalidad, $estado, $orden);
-    if(count($resultado) === 0){
+    if (count($resultado) === 0) {
         echo "Sin resultados\n";
     } else {
+        if ($resultado === []) {
+            echo "Sin resultados\n";
+        }
+
         foreach ($servicio->etiquetas($resultado) as $etiqueta) {
             echo $etiqueta . "\n";
-            print_r($servicio->resumir($resultado));
         }
+
+        print_r($servicio->resumir($resultado));
     }
 }
 
@@ -181,4 +186,3 @@ foreach ($servicios as $nombre => $servicioProbado) {
         echo "[$nombre] orden desconocido rechazado - " . $error->getMessage() . "\n";
     }
 }
-

@@ -1,48 +1,56 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Modelo;
+
 use App\Modelo\EstadoEnvio;
 use App\Excepcion\EnvioException;
 use InvalidArgumentException;
 
-abstract class Envio{
-    
+abstract class Envio
+{
 
-    public function __construct(private readonly int $id, 
-                                private string $cliente, 
-                                private int $peso, 
-                                private EstadoEnvio $estado)
-    {
-        if($this->id() <= 0){
+
+    public function __construct(
+        private readonly int $id,
+        private string $cliente,
+        private int $peso,
+        private EstadoEnvio $estado
+    ) {
+        if ($this->id() <= 0) {
             throw new InvalidArgumentException('El valor id debe de ser un entero positivo');
         }
-        if(trim($this->cliente()) === ''){
+        if (trim($this->cliente()) === '') {
             throw new InvalidArgumentException('Cliente es un campo obligatorio');
         }
-        if($this->peso() < 1 || $this->peso() > 20000){
+        if ($this->peso() < 1 || $this->peso() > 20000) {
             throw new InvalidArgumentException('El peso no se encuentra dentro de los valores permitidos');
         }
         $this->cliente = trim($this->cliente);
     }
 
 
-    public function id(): int{
+    public function id(): int
+    {
         return $this->id;
     }
-    public function cliente():string{
+    public function cliente(): string
+    {
         return $this->cliente;
     }
-    public function peso(): int{
+    public function peso(): int
+    {
         return $this->peso;
     }
-    public function estado():EstadoEnvio{
+    public function estado(): EstadoEnvio
+    {
         return $this->estado;
     }
-    public abstract function modalidad():string;
+    public abstract function modalidad(): string;
 
-    protected abstract function cuotaFija():int;
-    protected abstract function precioBloque():int;
+    protected abstract function cuotaFija(): int;
+    protected abstract function precioBloque(): int;
 
     public function tarifa(): int
     {
