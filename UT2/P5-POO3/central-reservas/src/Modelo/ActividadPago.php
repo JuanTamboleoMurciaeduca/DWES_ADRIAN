@@ -9,7 +9,7 @@ final class ActividadPago extends Actividad{
         if($precioCentimos <= 0){
             throw new InvalidArgumentException('El precio debe de ser una cantidad mayor que 0');
         }
-        return parent::__construct($id, $nombre, $capacidad, $ocupadas, $estado, $responsable);
+        parent::__construct($id, $nombre, $capacidad, $ocupadas, $estado, $responsable);
     }
 
     public function tipo(): string

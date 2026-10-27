@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 require_once __DIR__ . '/../src/cargar.php';
@@ -20,17 +21,18 @@ $soloDisponibles = entrada($_GET, 'disponibles') === '1';
 $orden = entrada($_GET, 'orden', 'nombre');
 $idConsulta = entrada($_GET, 'id');
 
-if(!in_array($tipo, ['', 'gratuita', 'pago'])){
-    $avisos[]= 'Tipo no valido';
+if (!in_array($tipo, ['', 'gratuita', 'pago'])) {
+    $avisos[] = 'Tipo no valido';
     $tipo = '';
 }
-if(!is_string($estadoTexto)){
+if (!is_string($estadoTexto)) {
     $avisos[] = 'Estado no valido';
     $estadoTexto = '';
 }
-$estado = EstadoActividad::tryFrom($estadoTexto);
-if(!in_array($orden, ['nombre', 'libres'])){
-    $orden = 'nombre';
+$estado = $estadoTexto === '' ? null : EstadoActividad::tryFrom($estadoTexto);
+if ($estadoTexto !== '' && $estado === null) {
+    $avisos[] = 'Estado no válido. Se muestran todos los estados.';
+    $estadoTexto = '';
 }
 
 // FIN E1
@@ -38,9 +40,9 @@ if(!in_array($orden, ['nombre', 'libres'])){
 if (isset($_GET['accion'])) {
     // INICIO E2
     // TODO E2. Procesa la operación y captura las excepciones como indica el apartado 7.
-    try{
+    try {
         $accion = entrada($_GET, 'accion');
-        if(!in_array($accion, ['reservar', 'cancelar']))
+        if (!in_array($accion, ['reservar', 'cancelar']))
             throw new InvalidArgumentException('Accion no valida');
         $idActividad = enteroPositivo(entrada($_GET, 'idActividad'));
         $cantidad = enteroPositivo(entrada($_GET, 'cantidad'));
@@ -48,21 +50,20 @@ if (isset($_GET['accion'])) {
 
         is_null($actividadBuscada) ? (throw new ReservaException('Actividad no encontrada')) : ($actividadBuscada->importe($cantidad));
 
-       if($accion === 'reservar'){
+        if ($accion === 'reservar') {
             $actividadBuscada->reservar($cantidad);
             $mensaje = 'Reserva realizada. Importe:  ' . euros($actividadBuscada->importe($cantidad));
-       } else {
+        } else {
             $actividadBuscada->cancelar($cantidad);
             $mensaje = 'Cancelación realizada. Importe:  ' . euros($actividadBuscada->importe($cantidad));
-       }
-    }catch(PlazasInsuficientesException $e){
+        }
+    } catch (PlazasInsuficientesException $e) {
         $error = $e->getMessage();
-    }catch(ReservaException $e){
+    } catch (ReservaException $e) {
         $error = $e->getMessage();
-    }catch(InvalidArgumentException $e){
+    } catch (InvalidArgumentException $e) {
         $error = $e->getMessage();
-    }
-    finally{
+    } finally {
         $cierre = 'Procesamiento de la operación finalizado';
     }
     // FIN E2
@@ -71,15 +72,16 @@ if (isset($_GET['accion'])) {
 // INICIO E3
 // TODO E3. Consulta la ficha y prepara el listado, el resumen y las etiquetas.
 $ficha = null;
-if($idConsulta !== ''){
-    try{
-    $idFicha = enteroPositivo($idConsulta);
-    $ficha = buscarPorId($actividades, $idFicha) ?? throw new InvalidArgumentException('No existe la actividad de la ficha');
-        
-    }catch(InvalidArgumentException $e){
+if ($idConsulta !== '') {
+    try {
+        $idFicha = enteroPositivo($idConsulta);
+        $ficha = buscarPorId($actividades, $idFicha) ?? throw new InvalidArgumentException('No existe la actividad de la ficha');
+        if ($ficha === null) {
+            $avisos[] = 'No existe la actividad de la ficha.';
+        }
+    } catch (InvalidArgumentException $e) {
         $avisos[] = $e->getMessage();
     }
-
 }
 
 $visibles = ordenarActividades(filtrarActividades($actividades, $texto, $tipo, $estado, $soloDisponibles), $orden);

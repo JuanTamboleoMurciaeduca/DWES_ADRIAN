@@ -4,23 +4,17 @@ declare(strict_types=1);
 
 namespace Clase\Alquileres\Modelo;
 
-use Override;
-
-class AlquilerBicicleta extends Alquiler{
-
-    public function __construct(int $id, string $cliente, int $dias, EstadoAlquiler $estado)
-    {
-        return parent::__construct($id, $cliente, $dias, $estado);
-    }
-
+class AlquilerBicicleta extends Alquiler
+{
+    // No hace falta volver a definir el constructor, por defecto coge el del padre
 
     public function modalidad(): string
     {
         return 'bicicleta';
     }
-    
+
     protected function tarifaDiaria(): int
     {
-        return 500;    
+        return 500;
     }
 }

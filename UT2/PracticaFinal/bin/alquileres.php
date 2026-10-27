@@ -3,13 +3,11 @@
 declare(strict_types=1);
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Clase\Alquileres\Modelo\Alquiler;
 use Clase\Alquileres\Excepcion\AlquilerException;
 use Clase\Alquileres\Modelo\AlquilerBicicleta;
 use Clase\Alquileres\Modelo\AlquilerPatinete;
 use Clase\Alquileres\Modelo\EstadoAlquiler;
 use Clase\Alquileres\Servicio\ServicioAlquileres;
-use InvalidArgumentException;
 
 $alquileres = [
     new AlquilerBicicleta(501, 'Lucía Torres', 2, EstadoAlquiler::Reservado),
@@ -81,20 +79,18 @@ $alquileres[0]->finalizar();
 
 //Paso 4
 
-try{
+try {
     $alquileres[2]->iniciar();
-}catch(AlquilerException $e){
+} catch (AlquilerException $e) {
     echo $e->getMessage() . "\n";
-
 }
 
 //Paso 5
 
-try{
+try {
     $alquileres[3]->finalizar();
-}catch(AlquilerException $e){
+} catch (AlquilerException $e) {
     echo $e->getMessage() . "\n";
-
 }
 
 //Paso 6
@@ -153,11 +149,10 @@ mostrar('', $alquileres, $servicio);
 
 // 4.4.3
 //Hago una operacion que se que va a salir mal
-try{
+try {
     $alquileres[2]->iniciar();
-}catch(AlquilerException $e){
+} catch (AlquilerException $e) {
     echo $e->getMessage() . "\n";
-
 }
 
 //Muestro el estado despues
@@ -166,11 +161,10 @@ mostrar('Estado despues de operacion mala', $alquileres, $servicio);
 
 
 //Otro caso con finalizar
-try{
+try {
     $alquileres[3]->finalizar();
     $alquileres[3]->finalizar();
-}catch(AlquilerException $e){
+} catch (AlquilerException $e) {
     echo $e->getMessage() . "\n";
-
 }
 mostrar('Estado despues de operacion mala', $alquileres, $servicio);
